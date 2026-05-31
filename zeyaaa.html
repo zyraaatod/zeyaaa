@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Zeyraa ~ Web Dev</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --cream: #fffbe6;
+            --yellow: #ffe033;
+            --red: #ff2d2d;
+            --blue: #1a1aff;
+            --pink: #ff6fcf;
+            --green: #00e676;
+            --orange: #ff6a00;
+            --border: 3px solid var(--black);
+            --border-thick: 5px solid var(--black);
+            --shadow: 5px 5px 2px var(--black);
+            --shadow-lg: 8px 8px 2px var(--black);
+            --transisi: all 0.2s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* FORCE MOBILE */
+        html, body {
+            background: var(--cream);
+            font-family: 'Space Mono', monospace;
+            max-width: 430px;
+            margin: 0 auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ======== NOISE TEXTURE OVERLAY ======== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.4;
+        }
+
+        /* ======== POPUP ======== */
+        .popup {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .popup-box {
+            background: var(--yellow);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-lg);
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.6) rotate(-4deg); opacity: 0; }
+            to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+        }
+
+        .popup-box::before {
+            content: '!!';
+            position: absolute;
+            top: -18px; right: 12px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.4rem;
+            color: var(--red);
+            line-height: 1;
+        }
+
+        .popup-box h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 0.05em;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .popup-box p {
+            font-size: 0.78rem;
+            color: var(--black);
+            font-style: italic;
+        }
+
+        .popup-btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 36px;
+            background: var(--black);
+            color: var(--yellow);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
+            border: var(--border-thick);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            border-radius: 5px;
+        }
+
+        .popup-btn:active {
+            transform: translate(5px,5px);
+            box-shadow: 0 0 0 var(--black);
+        }
+
+
+
+        /* ======== NAV ======== */
+        nav.navi {
+            background: var(--yellow);
+            border-bottom: var(--border-thick);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navi-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            color: var(--black);
+            background: transparent;
+            letter-spacing: 0.06em;
+        }
+
+        .navi-badge {
+            background: var(--black);
+            color: var(--yellow);
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border: var(--border);
+            letter-spacing: 0.1em;
+        }
+
+        /* ======== HERO ======== */
+        .hero {
+            padding: 28px 16px 0;
+            position: relative;
+        }
+
+        /* Deco sticker blobs */
+        .hero::before {
+            content: '★ Aak Slebew ★';
+            position: absolute;
+            top: 20px; right: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            background: var(--pink);
+            color: var(--black);
+            padding: 6px 10px;
+            border: var(--border);
+            box-shadow: 3px 3px 0 var(--black);
+            transform: rotate(6deg);
+            letter-spacing: 0.08em;
+        }
+
+        .hero-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar-frame {
+            width: 96px;
+            height: 96px;
+            border: var(--border-thick);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            background: var(--blue);
+        }
+
+        .avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-tag {
+            position: absolute;
+            bottom: -12px; left: -8px;
+            background: var(--green);
+            border: var(--border);
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            box-shadow: 2px 2px 0 var(--black);
+            color: var(--black);
+            white-space: nowrap;
+        }
+
+        .hero-text {
+            flex: 1;
+            background: transparent;
+        }
+
+        .profile-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            line-height: 0.92;
+            color: var(--black);
+            background: transparent;
+            letter-spacing: -0.01em;
+        }
+
+        .profile-name em {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 2.2rem;
+            color: var(--red);
+            background: transparent;
+        }
+
+        .profile-sub {
+            margin-top: 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--black);
+            background: var(--yellow);
+            display: inline-block;
+            padding: 3px 8px;
+            border: var(--border);
+        }
+
+
+
+        /* ======== SECTIONS ======== */
+        .sections {
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--cream);
+            border: var(--border-thick);
+            box-shadow: var(--shadow);
+            padding: 20px 16px;
+            position: relative;
+            animation: slideUp 0.5s ease both;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+
+        .card-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.06em;
+            color: var(--black);
+            background: transparent;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: var(--border);
+            background: transparent;
+        }
+
+        .card-header .dot.y { background: var(--yellow); }
+        .card-header .dot.r { background: var(--red); }
+        .card-header .dot.b { background: var(--blue); }
+        .card-header .dot.g { background: var(--green); }
+
+        /* info card */
+        .info-card {
+            background: var(--cream);
+        }
+
+        .info-card::after {
+            content: '';
+            position: absolute;
+            top: 10px; right: 12px;
+            width: 28px; height: 28px;
+            background: var(--orange);
+            border: var(--border);
+            transform: rotate(15deg);
+        }
+
+        .info-text {
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: var(--black);
+            background: transparent;
+        }
+
+        .info-text strong {
+            padding: 0 4px;
+        }
+
+        /* sosmed card */
+        .sosmed-card {
+            background: rgba(116, 8, 184, 0.8);
+        }
+
+        .sosmed-card .card-header {
+            color: var(--yellow);
+        }
+
+        .sosmed-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: transparent;
+        }
+
+        .sosmed-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            border: 3px solid;
+            box-shadow: 4px 4px 0;
+            transition: var(--transisi);
+            text-transform: uppercase;
+            border-radius: 5px;
+        }
+
+        .sosmed-link:active {
+            transform: translate(4px,4px);
+            box-shadow: 0 0 0;
+        }
+
+        .sosmed-link.ig {
+            background: rgba(255, 116, 116, 1);
+            color: black;
+            border-color: var(--black);
+            box-shadow-color: var(--black);
+            box-shadow: 4px 4px 2px var(--black);
+        }
+        .sosmed-link.ig:hover {
+            background: rgba(255, 47, 47, 0.8);
+            object-fit: transparent;
+            
+        }
+
+        .sosmed-link.tt {
+            background: rgba(38, 38, 38, 1);
+            color: white;
+            border-color: var(--black);
+            box-shadow: 4px 4px 2px var(--black);
+        }
+        .sosmed-link.tt:hover {
+            background: black;
+            object-fit: transparent;
+            transition: var(--transisi);
+        }
+
+        .arrow-badge {;
+            color: var(--cream);
+            font-size: 0.9rem;
+        }
+
+        .sosmed-link.ig .arrow-badge {
+            color: white;
+        }
+
+        .sosmed-link.tt .arrow-badge {
+            color: white;
+        }
+
+        .sosmed-link.tw {
+            background: #000000;
+            color: white;
+            border-color: var(--black);
+            box-shadow: 4px 4px 2px var(--black);
+        }
+        .sosmed-link.tw:hover {
+            background: #1a1a1a;
+            transition: var(--transisi);
+        }
+        .sosmed-link.tw .arrow-badge {
+            color: white;
+        }
+
+        .sosmed-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .sosmed-label {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        /* kontak card */
+        .kontak-card {
+            background: var(--yellow);
+        }
+
+        .email-box {
+            background: var(--black);
+            color: var(--yellow);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 14px 12px;
+            border: var(--border-thick);
+            box-shadow: var(--shadow);
+            letter-spacing: 0.08em;
+            word-break: break-all;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .email-box::before {
+            content: 'EMAIL';
+            position: absolute;
+            top: 4px; right: 8px;
+            font-size: 0.5rem;
+            color: rgba(255,224,51,0.5);
+            letter-spacing: 0.2em;
+        }
+
+        /* ======== FOOTER ======== */
+        footer.kaki {
+            background: var(--black);
+            border-top: var(--border-thick);
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        footer.kaki p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--cream);
+            background: transparent;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        footer.kaki .foot-big {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--yellow);
+            background: transparent;
+            line-height: 1;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ======== MUSIC TOGGLE ======== */
+        .music-fab {
+            position: fixed;
+            bottom: 24px; right: 16px;
+            width: 50px; height: 50px;
+            background: var(--green);
+            border: var(--border-thick);
+            box-shadow: var(--shadow);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            z-index: 500;
+            transition: transform 1s, box-shadow 1s;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 5px 5px 0 var(--black); }
+            50%       { box-shadow: 8px 8px 0 var(--black); }
+        }
+
+        .music-fab:active {
+            transform: translate(5px, 5px);
+            box-shadow: 0 0 0 var(--black);
+        }
+
+        /* ======== DECO SHAPES ======== */
+        .deco-stripe {
+            height: 6px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--red) 0px, var(--red) 20px,
+                var(--yellow) 20px, var(--yellow) 40px,
+                var(--blue) 40px, var(--blue) 60px,
+                var(--green) 60px, var(--green) 80px
+            );
+            border-top: var(--border);
+            border-bottom: var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- POPUP -->
+    <div id="myPopup" class="popup">
+        <div class="popup-box">
+            <h2>PESAN DARI AKUH🤗</h2>
+            <p>Hallaoww 👀</p>
+            <button class="popup-btn" onclick="closePopup()">Ha'aH</button>
+        </div>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="musik" src="https://zyraaatod.github.io/bahan-bahan/wantU.mp3" media="auto" loop></audio>
+
+    <!-- MUSIC FAB -->
+    <div class="music-fab" id="musicBtn" onclick="toggleMusic()" title="Toggle Musik">🎵</div>
+
+
+
+    <!-- NAV -->
+    <nav class="navi">
+        <span class="navi-logo">Zeyraa</span>
+        <span class="navi-badge">STAYY COOL ABISS</span>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-row">
+            <div class="avatar-wrap">
+                <div class="avatar-frame">
+                    <img src="https://zyraaatod.github.io/bahan-bahan/vid.gif" alt="Ayra" />
+                </div>
+                <div class="avatar-tag">✦ ONLINE</div>
+            </div>
+            <div class="hero-text">
+                <h1 class="profile-name">
+                    ZEY<br><em>raa.</em>
+                </h1>
+                <span class="profile-sub">// SiCentil</span>
+            </div>
+        </div>
+
+
+    </section>
+
+    <!-- DECO -->
+    <div class="deco-stripe"></div>
+
+    <!-- SECTIONS -->
+    <div class="sections">
+
+        <!-- INFO -->
+        <div class="card info-card">
+            <div class="card-header">
+                <span class="dot y"></span>
+                Informasi Saya
+            </div>
+            <p class="info-text">
+                Hai, aku <strong style="background: yellow;">Zeyraa</strong> 👋<br>
+                Aku anaknya suka nyasar di dunia fantasy. <br>
+                <strong style="background: rgba(0, 160, 186, 0.8);">Hobby</strong>: Baca novel sampe lupa waktu, main game,
+                dan nyoba hal-hal yang unik lainnya.<br> <strong style="background: rgba(237, 255, 148, 0.8);">Comfort Food</strong>: Matcha, Dimsum, Sayur Sop Makroni, Mie Ayam. <br>
+                My <strong style="background: rgba(145, 45, 203, 0.8);">Idol</strong>: Lana Del Retii, Taylor Swift<br>
+                <br>
+                WELCOME TO MY LITLE WORLD 🌙
+            </p>
+        </div>
+
+        <!-- SOSMED -->
+        <div class="card sosmed-card">
+            <div class="card-header">
+                <span class="dot g"></span>
+                Social Media
+            </div>
+            <div class="sosmed-links">
+                <a href="https://www.instagram.com/zeyvaraa_aresha?igsh=N2doNDVzdWZ0d24y" target="_blank" class="sosmed-link ig">
+                    <svg class="sosmed-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="black" stroke-width="2" fill="none"/>
+                        <circle cx="12" cy="12" r="4.5" stroke="black" stroke-width="2" fill="none"/>
+                        <circle cx="17.5" cy="6.5" r="1.2" fill="black"/>
+                    </svg>
+                    <span class="sosmed-label">Instagram</span>
+                    <span class="arrow-badge">→</span>
+                </a>
+                <a href="https://www.tiktok.com/@zeyraa_017?_r=1&_t=ZS-96oqoFqufYL" target="_blank" class="sosmed-link tt">
+                    <svg class="sosmed-icon" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.77a8.18 8.18 0 0 0 4.78 1.53V6.85a4.85 4.85 0 0 1-1.01-.16z"/>
+                    </svg>
+                    <span class="sosmed-label">TikTok</span>
+                    <span class="arrow-badge">→</span>
+                </a>
+                <a href="https://x.com/Chizuru_ayra" target="_blank" class="sosmed-link tw">
+                    <svg class="sosmed-icon" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span class="sosmed-label">Twitter</span>
+                    <span class="arrow-badge">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- KONTAK -->
+        <div class="card kontak-card">
+            <div class="card-header">
+                <span class="dot r"></span>
+                Fake Email
+            </div>
+            <div class="email-box">
+                blablabla@gmail.com
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="kaki">
+        <span class="foot-big">ZEYRAA NIH BOS</span>
+        <p>©2026 — dibuat oleh <a href="https://www.instagram.com/zydan_____18?igsh=ODl0aXByYmpkcTY=" target="_blank" style="text-decoration: none; color: var(--cream);">ZYDAN</a> ✦</p>
+    </footer>
+
+    <script>
+        // Popup close
+        function closePopup() {
+            document.getElementById('myPopup').style.display = 'none';
+        }
+
+        // Music
+        const audio = document.getElementById('musik');
+        let musikPlaying = false;
+        audio.volume = 1.0;
+
+        function tryPlay() {
+            audio.play().then(() => {
+                musikPlaying = true;
+                document.getElementById('musicBtn').textContent = '🎵';
+                document.removeEventListener('click', tryPlay);
+                document.removeEventListener('touchstart', tryPlay);
+            }).catch(() => {});
+        }
+
+        document.addEventListener('click', tryPlay);
+        document.addEventListener('touchstart', tryPlay);
+
+        function toggleMusic() {
+            if (musikPlaying) {
+                audio.pause();
+                musikPlaying = false;
+                document.getElementById('musicBtn').textContent = '🔇';
+            } else {
+                audio.play();
+                musikPlaying = true;
+                document.getElementById('musicBtn').textContent = '🎵';
+            }
+        }
+
+        // Animate cards on scroll
+        const cards = document.querySelectorAll('.card');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.style.opacity = '1';
+                    e.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        cards.forEach(c => {
+            c.style.opacity = '0';
+            c.style.transform = 'translateY(30px)';
+            c.style.transition = 'opacity 2s ease, transform 2s ease';
+            observer.observe(c);
+        });
+    </script>
+</body>
+</html>
